@@ -2,6 +2,21 @@
 
 Este proyecto es una aplicación full-stack con un frontend en React y un backend en Express usando Prisma como un ORM. El frontend se inicia con Create React App y el backend está escrito en TypeScript.
 
+## 🔒 Seguridad - IMPORTANTE
+
+**NUNCA commitees credenciales reales al repositorio.**
+
+### Configuración de Credenciales:
+1. Copia `tf/terraform.tfvars.example` como `tf/terraform.tfvars`
+2. Reemplaza los valores placeholder con tus credenciales reales de Datadog
+3. El archivo `terraform.tfvars` está en `.gitignore` y NO será commiteado
+
+### Archivos Sensibles Protegidos:
+- `tf/terraform.tfvars` - Variables sensibles de Terraform
+- `tf/terraform.tfvars.json` - Variables en formato JSON
+- `**/*.auto.tfvars` - Variables automáticas
+- `**/*.auto.tfvars.json` - Variables automáticas en JSON
+
 ## Explicación de Directorios y Archivos
 
 - `backend/`: Contiene el código del lado del servidor escrito en Node.js.

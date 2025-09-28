@@ -1,0 +1,9 @@
+# Ejemplo de configuración para terraform.tfvars
+# Copia este archivo como terraform.tfvars y reemplaza los valores
+
+# Credenciales de Datadog (obténlas desde https://app.datadoghq.eu/organization-settings/application-keys)
+datadog_api_key = "tu_api_key_de_datadog_aqui"
+datadog_app_key = "tu_app_key_de_datadog_aqui"
+
+# Sitio de Datadog (datadoghq.com para US, datadoghq.eu para EU)
+datadog_site = "datadoghq.eu"
