@@ -178,10 +178,109 @@ tf/
     └── frontend_user_data.sh # Script con agente Datadog
 ```
 
-## Resultados Esperados
+## Resultados Alcanzados ✅
 
-1. **Dashboard automático** con métricas de AWS
-2. **Alertas configuradas** para CPU y memoria
-3. **Agente Datadog** funcionando en ambas instancias
-4. **Monitoreo de Docker** activo
-5. **Integración AWS-Datadog** completa
+### ✅ Infraestructura Desplegada Exitosamente
+
+1. **Dashboard automático** con métricas de AWS ✅
+   - Dashboard ID: `7sm-cdn-597`
+   - Título: "AWS Infrastructure Monitoring"
+   - Widgets: CPU, Memory, Network, Disk usage
+
+2. **Alertas configuradas** para CPU y memoria ✅
+   - Monitor CPU: ID `90040234` (Warning: 70%, Critical: 80%)
+   - Monitor Memory: ID `90040233` (Warning: 75%, Critical: 85%)
+
+3. **Agente Datadog** funcionando en ambas instancias ✅
+   - Instalación automática via user_data
+   - Configuración EU (datadoghq.eu)
+   - Integración Docker habilitada
+
+4. **Monitoreo de Docker** activo ✅
+   - Configuración YAML para Docker
+   - Métricas de contenedores
+   - Reinicio automático del agente
+
+5. **Integración AWS-Datadog** completa ✅
+   - Rol IAM: `datadog-integration-role`
+   - Política IAM: `datadog-policy`
+   - Permisos completos para métricas AWS
+
+## Desafíos Resueltos Durante la Implementación
+
+### Desafío 6: Dependencias Circulares en Terraform
+**Problema:** Error de ciclo entre `datadog_integration_aws` y `aws_iam_role`.
+**Solución:** Reestructurar la creación de recursos y usar external_id temporal.
+
+### Desafío 7: Recursos Deprecados
+**Problema:** `datadog_integration_aws` está deprecado.
+**Solución:** Migrar a `datadog_integration_aws_account` con argumentos correctos.
+
+### Desafío 8: Widgets de Dashboard Demasiado Grandes
+**Problema:** Error "MSL widget out of grid. 47 is greater than the maximum of 12".
+**Solución:** Reducir el ancho de widgets de 47 a 12 píxeles.
+
+### Desafío 9: Tipos de Instancia No Elegibles para Free Tier
+**Problema:** `t2.micro` no disponible en Free Tier.
+**Solución:** Cambiar a `t3.micro` que es elegible para Free Tier.
+
+### Desafío 10: Archivos S3 No Existentes
+**Problema:** Referencias a archivos `backend.zip` y `frontend.zip` que no existen.
+**Solución:** Simplificar la configuración eliminando referencias S3 temporales.
+
+## Comandos de Verificación Utilizados
+
+```bash
+# Verificar estado de Terraform
+terraform state list
+
+# Verificar recursos específicos
+terraform show | grep -A 5 "datadog_dashboard"
+terraform show | grep -A 5 "datadog_monitor"
+
+# Verificar instancias EC2
+aws ec2 describe-instances --query "Reservations[*].Instances[*].[InstanceId,State.Name,PublicIpAddress]"
+
+# Verificar tipos de instancia elegibles para Free Tier
+aws ec2 describe-instance-types --filters "Name=free-tier-eligible,Values=true"
+```
+
+## URLs de Acceso a Datadog
+
+- **Dashboard**: https://app.datadoghq.eu/dashboard/7sm-cdn-597
+- **Monitores**: https://app.datadoghq.eu/monitors/manage
+- **Infrastructure**: https://app.datadoghq.eu/infrastructure
+
+## Estado Final de la Infraestructura
+
+### Recursos AWS Creados:
+- ✅ 2 instancias EC2 (backend y frontend) - tipo t3.micro
+- ✅ 2 Security Groups (backend_sg, frontend_sg)
+- ✅ 2 Roles IAM (ec2_role, datadog_role)
+- ✅ 1 Política IAM (datadog_policy)
+- ✅ 1 Instance Profile (ec2_instance_profile)
+
+### Recursos Datadog Creados:
+- ✅ 1 Dashboard (aws_infrastructure)
+- ✅ 2 Monitores (high_cpu, high_memory)
+- ✅ Integración AWS-Datadog configurada
+
+### Scripts de User Data:
+- ✅ backend_user_data.sh - Con instalación de agente Datadog
+- ✅ frontend_user_data.sh - Con instalación de agente Datadog
+
+## Lecciones Aprendidas
+
+1. **Free Tier Limitations**: Siempre verificar tipos de instancia elegibles
+2. **Dashboard Layout**: Los widgets tienen límites de tamaño específicos
+3. **Resource Dependencies**: Planificar cuidadosamente las dependencias
+4. **Deprecated Resources**: Mantenerse actualizado con cambios en providers
+5. **Error Handling**: Implementar manejo robusto de errores en Terraform
+
+## Próximos Pasos Recomendados
+
+1. **Verificar métricas** en el dashboard de Datadog
+2. **Probar alertas** generando carga en las instancias
+3. **Configurar notificaciones** para los monitores
+4. **Añadir más métricas** según necesidades específicas
+5. **Implementar logging** con Datadog Logs
